@@ -6,12 +6,9 @@ class Guess:
         self.currentStatus = []  # 단어 중 맞춘 글자의 위치를 표시한 글자의 리스트
         for i in range(len(word)):
             self.currentStatus += ['_']
-
     def display(self):
         print("current Status:", end='')
-        for c in self.currentStatus:
-            print(c, end='')
-        print()
+        print(''.join(self.currentStatus))
         print("Tries ", self.numTries)
 
     # 전체 단어를 완성했는지 여부를 리턴
