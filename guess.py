@@ -8,9 +8,11 @@ class Guess:
             self.currentStatus += ['_']
 
     def display(self):
-        print("Current Status: ", self.currentStatus)
+        print("current Status:", end='')
+        for c in self.currentStatus:
+            print(c, end='')
+        print()
         print("Tries ", self.numTries)
-        #print("word", self.secretWord)
 
     # 전체 단어를 완성했는지 여부를 리턴
     def guess(self, character):
@@ -21,12 +23,11 @@ class Guess:
             self.guessedChars |= {character}
         else:
             self.numTries += 1
-        #character가 secretWord의 i번째에 있는 글자이면 currentStatus의 i번 째에 있는 글자에 character를 대입
+
+        # character가 secretWord의 i번째에 있는 글자이면 currentStatus의 i번 째에 있는 글자에 character를 대입
         for i in range(len(self.secretWord)):
             if character == self.secretWord[i]:
                 self.currentStatus[i] = character
-        #currentStatus 안에 모든 글자가 채워졌는지(모든 글자를 맞추었는지)를 반환
-        return '_' not in self.currentStatus
 
-        #if list(self.secretWord) == self.currentStatus:
-        #    return True
+        # currentStatus 안에 모든 글자가 채워졌는지(모든 글자를 맞추었는지)를 반환
+        return '_' not in self.currentStatus
