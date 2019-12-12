@@ -15,7 +15,7 @@ class ScoreDB(QWidget):
         self.readScoreDB()
         self.showScoreDB()
         self.writeScoreDB()
-#        self.doScoreDB()
+        self.doScoreDB()
 
     def initUI(self):
         self.setGeometry(300, 300, 900, 500)
@@ -33,20 +33,20 @@ class ScoreDB(QWidget):
         VBox.addLayout(ResultBox)
         #Label & Value
         NameLabel = QLabel("Name: ")
-        NameValue = QLineEdit()
+        self.NameValue = QLineEdit()
 
         AgeLabel = QLabel("Age: ")
-        AgeValue = QLineEdit()
+        self.AgeValue = QLineEdit()
 
         ScoreLabel = QLabel("Score: ")
-        ScoreValue = QLineEdit()
+        self.ScoreValue = QLineEdit()
 
         AmountLabel = QLabel("Amount: ")
-        AmountValue = QLineEdit()
+        self.AmountValue = QLineEdit()
 
         KeyLabel = QLabel("Key: ")
-        KeyValue = QComboBox()
-        KeyValue.addItems(["Name", "Age", "Score"])
+        self.KeyValue = QComboBox()
+        self.KeyValue.addItems(["Name", "Age", "Score"])
 
         #Button
         addButton = QPushButton("Add")
@@ -54,24 +54,31 @@ class ScoreDB(QWidget):
         findButton = QPushButton("Find")
         incButton = QPushButton("Inc")
         showButton = QPushButton("Show")
-        ResultTextWindow = QTextEdit()
+        
+        addButton.clicked.connect(self.buttonClicked)
+        delButton.clicked.connect(self.buttonClicked)
+        findButton.clicked.connect(self.buttonClicked)
+        incButton.clicked.connect(self.buttonClicked)
+        showButton.clicked.connect(self.buttonClicked)
+        
+        self.ResultTextWindow = QTextEdit()
 
         #Box's Widget add
 
         InputBox.addWidget(NameLabel)
-        InputBox.addWidget(NameValue)
+        InputBox.addWidget(self.NameValue)
         InputBox.addStretch(1)
         InputBox.addWidget(AgeLabel)
-        InputBox.addWidget(AgeValue)
+        InputBox.addWidget(self.AgeValue)
         InputBox.addStretch(1)
         InputBox.addWidget(ScoreLabel)
-        InputBox.addWidget(ScoreValue)
+        InputBox.addWidget(self.ScoreValue)
         InputBox.addStretch(1)
         InputBox.addWidget(AmountLabel)
-        InputBox.addWidget(AmountValue)
+        InputBox.addWidget(self.AmountValue)
         InputBox.addStretch(1)
         InputBox.addWidget(KeyLabel)
-        InputBox.addWidget(KeyValue)
+        InputBox.addWidget(self.KeyValue)
 
         ButtonBox.addWidget(addButton)
         ButtonBox.addWidget(delButton)
@@ -79,7 +86,7 @@ class ScoreDB(QWidget):
         ButtonBox.addWidget(incButton)
         ButtonBox.addWidget(showButton)
 
-        ResultBox.addWidget(ResultTextWindow)
+        ResultBox.addWidget(self.ResultTextWindow)
 
 #        hbox.addWidget(addButton)
         self.setLayout(VBox)
@@ -88,17 +95,33 @@ class ScoreDB(QWidget):
     def buttonClicked(self):
         sender = self.sender()
         if sender.text() == 'Add':
-            pass
-            self.writeScoreDB()
+            self.scoredb += [{'Name': self.NameValue.text(), 'Age': int(self.AgeValue.text()),
+                             'Score': int(self.ScoreValue.text())}]
+            self.showScoreDB()
         elif sender.text() == 'Del':
-            pass
+            li = []
+            for i in range(len(self.scoredb)):
+                if self.scoredb[i]['Name'] != self.NameValue.text():
+                    li.append(self.scoredb[i])
+            self.scoredb = li
         elif sender.text() == 'Find':
-            pass
+            s = ""
+            for dict in self.scoredb:
+                if dict['Name'] == self.NameValue.text():
+                    for key in dict:
+                        s += "" + str(key) + "=" + str(dict[key]) + "    "
+                    s += "\n"
+            self.ResultTextWindow.setText(s)
+
         elif sender.text() == 'Inc':
-            pass
+            s = ""
+            for dict in self.scoredb:
+                if dict['Name'] == self.NameValue.text():
+                    dict['Score'] += int(self.AmountValue.text())
+            self.showScoreDB()
+
         elif sender.text() == 'Show':
-            pass
-            self.showScroeDB()
+            self.showScoreDB()
 
     def closeEvent(self, event):
         self.writeScoreDB()
@@ -126,10 +149,21 @@ class ScoreDB(QWidget):
         fH.close()
 
     def showScoreDB(self):
+        self.scoredb.sort(key = lambda x: x[self.KeyValue.currentText()])
+
+        s = ""
+        for dict in self.scoredb:
+            for key in dict:
+                s += "" + str(key) + "=" + str(dict[key]) + "    "
+            s += "\n"
+        self.ResultTextWindow.setText(s)
+
+    def doScoreDB(self):
         pass
 
-if __name__ == '__main__':
+if __name__ == '__main__':    
     app = QApplication(sys.argv)
     app.setStyle('Fusion')
     ex = ScoreDB()
     sys.exit(app.exec_())
+
